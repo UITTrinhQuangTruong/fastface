@@ -6,7 +6,7 @@
 
 * Creation Date : 01-06-2021
 
-* Last Modified : 06:08:53 PM, 03-06-2021
+* Last Modified : 11:24:13 PM, 03-06-2021
 
 * Created By : Trinh Quang Truong
 
@@ -28,7 +28,7 @@ ulf = ULFDetector()
 
 abspath = os.path.dirname(os.path.abspath(__file__))
 
-list_path_test = sorted(glob.glob(os.path.join(abspath, '../data/*.jpg')))
+list_path_test = sorted(glob.glob(os.path.join(abspath, '*.jpg')))
 list_img_align = []
 for path in list_path_test[:10]:
     print(path)
