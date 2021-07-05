@@ -6,20 +6,22 @@
 
 * Creation Date : 24-05-2021
 
-* Last Modified : 05:59:46 PM, 03-06-2021
+* Last Modified : 06:41:03 PM, 04-07-2021
 
 * Created By : Trinh Quang Truong
 
 ------------------------------------"""
 
-from .helper import nms, adjust_input, detect_first_stage_warpper
+import os
+
 from itertools import repeat
 from multiprocessing import Pool
 import cv2
 import numpy as np
 import mxnet as mx
-import os
 import tensorflow as tf
+
+from .helper import nms, adjust_input, detect_first_stage_warpper
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -729,7 +731,8 @@ class ULFDetector(object):
         # result=[background,face,x1,y1,x2,y2]
         results = self.model.predict(np.expand_dims(img_resize, axis=0))
         # result=[x1,y1,x2,y2,background,face]
-        results = [[i[2] * w, i[3] * h, i[4] * w, i[5] * h] for i in results]
+        results = [[i[2] * w, i[3] * h, i[4] * w, i[5] * h, i[0], i[1]]
+                   for i in results]
         #  print(len(results))
         bboxes, points = self.get_landmark(img, results)
         #  print(bboxes.shape)
@@ -818,14 +821,14 @@ class ULFDetector(object):
             #  MIN_DET_SIZE = 12
 
             if img is None:
-                return None
+                return None, None
 
             if total_boxes is None:
-                return None
+                return None, None
 
             # only works for color image
             if len(img.shape) != 3:
-                return None
+                return None, None
 
         #############################################
         # third stage

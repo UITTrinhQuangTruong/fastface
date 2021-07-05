@@ -3,4 +3,14 @@
 # cache
 **__pycache__/
 
+**.Identifier
+# Weight
 
+**.pkl
+
+
+**.png
+**.jpg
+**.json
+**.zip
+**.rar

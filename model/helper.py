@@ -6,7 +6,7 @@
 
 * Creation Date : 31-05-2021
 
-* Last Modified : 11:17:40 AM, 31-05-2021
+* Last Modified : 06:54:10 PM, 19-06-2021
 
 * Created By : Trinh Quang Truong
 
@@ -77,6 +77,7 @@ def nms(boxes, overlap_threshold, mode='Union'):
 
     return pick
 
+
 def adjust_input(in_data):
     """
         adjust the input from (h, w, c) to ( 1, c, h, w) for network input
@@ -94,10 +95,11 @@ def adjust_input(in_data):
     else:
         out_data = in_data
 
-    out_data = out_data.transpose((2,0,1))
+    out_data = out_data.transpose((2, 0, 1))
     out_data = np.expand_dims(out_data, 0)
     out_data = (out_data - 127.5)*0.0078125
     return out_data
+
 
 def generate_bbox(map, reg, scale, threshold):
      """
@@ -119,7 +121,7 @@ def generate_bbox(map, reg, scale, threshold):
      stride = 2
      cellsize = 12
 
-     t_index = np.where(map>threshold)
+     t_index = np.where(map > threshold)
 
      # find nothing
      if t_index[0].size == 0:
@@ -159,20 +161,29 @@ def detect_first_stage(img, net, scale, threshold):
     hs = int(math.ceil(height * scale))
     ws = int(math.ceil(width * scale))
 
-    im_data = cv2.resize(img, (ws,hs))
+    im_data = cv2.resize(img, (ws, hs))
 
     # adjust for the network input
     input_buf = adjust_input(im_data)
     output = net.predict(input_buf)
-    boxes = generate_bbox(output[1][0,1,:,:], output[0], scale, threshold)
+    boxes = generate_bbox(output[1][0, 1, :, :], output[0], scale, threshold)
 
     if boxes.size == 0:
         return None
 
     # nms
-    pick = nms(boxes[:,0:5], 0.5, mode='Union')
+    pick = nms(boxes[:, 0:5], 0.5, mode='Union')
     boxes = boxes[pick]
     return boxes
 
-def detect_first_stage_warpper( args ):
+
+def detect_first_stage_warpper(args):
     return detect_first_stage(*args)
+
+
+def normalize_image(img, size=(112, 112)):
+    """
+        normalize image and resize image to (112, 112)
+    """
+    img_copy = cv2.resize(img, size)
+    return (img_copy - 127.5) * 0.0078125
